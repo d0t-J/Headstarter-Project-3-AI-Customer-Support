@@ -44,8 +44,8 @@ Remember, the goal is to help each customer find joy and excitement in their pur
         for await (const chunk of completion) {
           const content = chunk.choices[0]?.delta?.content;
           if (content) {
-            const text = encoder.encode(content)
-            controller.enqueue(text)
+            const text = encoder.encode(content);
+            controller.enqueue(text);
           }
         }
       } catch (err) {
@@ -55,5 +55,6 @@ Remember, the goal is to help each customer find joy and excitement in their pur
       }
     },
   });
+
   return new NextResponse(stream);
 }

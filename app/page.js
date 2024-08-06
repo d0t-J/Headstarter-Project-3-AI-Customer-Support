@@ -9,12 +9,14 @@ export default function Home() {
       content: "Hi. I am support Super man. How to help you?",
     },
   ]);
+  const [message, setMessage] = useState("");
 
   const sendMessage = async () => {
     setMessage("");
     setMessages((messages) => [
       ...messages,
       { role: "user", content: message },
+      { role: "assistant", content: "" },
     ]);
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -23,14 +25,30 @@ export default function Home() {
       },
       body: JSON.stringify([...messages, { role: "user", content: message }]),
     });
-    const data = await response.json();
-    setMessages((messages) => [
-      ...messages,
-      { role: "assistant", content: data.message },
-    ]);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const text = decoder.decode(value, { stream: true });
+      result += text;
+      setMessages((messages) => {
+        let lastMessage = messages[messages.length - 1];
+        let otherMessages = messages.slice(0, messages.length - 1);
+        return [
+          ...otherMessages,
+          {
+            ...lastMessage,
+            content: lastMessage.content + text,
+          },
+        ];
+      });
+    }
   };
 
-  const [message, setMessage] = useState("");
   return (
     <Box
       width="100vw"
