@@ -34,8 +34,26 @@ Remember, the goal is to help each customer find joy and excitement in their pur
   const completion = await openai.chat.completions.create({
     model: "meta-llama/llama-3-8b-instruct:free",
     messages: [{ role: "system", content: systemPrompt }, ...data],
+    stream: true,
   });
 
-  const messageContent = completion.choices[0].message.content;
-  return NextResponse.json({ message: messageContent }, { status: 200 });
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      try {
+        for await (const chunk of completion) {
+          const content = chunk.choices[0]?.delta?.content;
+          if (content) {
+            const text = encoder.encode(content)
+            controller.enqueue(text)
+          }
+        }
+      } catch (err) {
+        controller.error(err);
+      } finally {
+        controller.close();
+      }
+    },
+  });
+  return new NextResponse(stream);
 }

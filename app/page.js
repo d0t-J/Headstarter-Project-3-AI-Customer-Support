@@ -11,6 +11,11 @@ export default function Home() {
   ]);
 
   const sendMessage = async () => {
+    setMessage("");
+    setMessages((messages) => [
+      ...messages,
+      { role: "user", content: message },
+    ]);
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -19,7 +24,10 @@ export default function Home() {
       body: JSON.stringify([...messages, { role: "user", content: message }]),
     });
     const data = await response.json();
-    setMessages([...messages, { role: "assistant", content: data.message }]);
+    setMessages((messages) => [
+      ...messages,
+      { role: "assistant", content: data.message },
+    ]);
   };
 
   const [message, setMessage] = useState("");
@@ -62,7 +70,7 @@ export default function Home() {
                     : "secondary.main"
                 }
                 color="white"
-                borderRadius={16}
+                borderRadius={14}
                 p={3}
               >
                 {message.content}
