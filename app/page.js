@@ -1,6 +1,5 @@
 "use client";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import { ST } from "next/dist/shared/lib/utils";
 import { useState } from "react";
 
 export default function Home() {
@@ -11,33 +10,60 @@ export default function Home() {
     },
   ]);
 
+  const sendMessage = async () => {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([...messages, { role: "user", content: message }]),
+    });
+    const data = await response.json();
+    setMessages([...messages, { role: "assistant", content: data.message }]);
+  };
+
+  const [message, setMessage] = useState("");
   return (
     <Box
       width="100vw"
       height="100vh"
       display="flex"
       flexDirection="column"
-      justifyContent="flex-end"
+      justifyContent="center"
+      alignItems="center"
     >
-      <Stack direction={"column"}>
-        <Stack direction={"column"} spacing={2}>
+      <Stack
+        direction={"column"}
+        width="500px"
+        height="700px"
+        border="1px solid black"
+        p={2}
+        spacing={3}
+      >
+        <Stack
+          direction={"column"}
+          spacing={2}
+          flexGrow={1}
+          overflow="auto"
+          maxHeight="100%"
+        >
           {messages.map((message, index) => (
             <Box
               key={index}
-              display={flex}
+              display="flex"
               justifyContent={
-                messages.role === "assisstant" ? "flex-start" : "flex-end"
+                message.role === "assistant" ? "flex-start" : "flex-end"
               }
             >
               <Box
                 bgcolor={
-                  messages.role === "assisstant"
+                  message.role === "assistant"
                     ? "primary.main"
                     : "secondary.main"
                 }
-                color={white}
+                color="white"
                 borderRadius={16}
-                p={2}
+                p={3}
               >
                 {message.content}
               </Box>
@@ -45,8 +71,15 @@ export default function Home() {
           ))}
         </Stack>
         <Stack direction={"row"} spacing={2}>
-          <TextField label="message" fullWidth />
-          <Button variant="outlined">Send</Button>
+          <TextField
+            label="Message"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <Button variant="contained" onClick={sendMessage}>
+            Send
+          </Button>
         </Stack>
       </Stack>
     </Box>
