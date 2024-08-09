@@ -3,12 +3,15 @@ import {
   Box,
   Button,
   Container,
+  Grid,
   List,
   ListItem,
   ListItemText,
   Stack,
   TextField,
 } from "@mui/material";
+import { Add } from '@mui/icons-material';
+import { ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
@@ -198,7 +201,7 @@ export default function Home() {
           mr={2}
         >
           <Button variant="contained" fullWidth onClick={createNewChat}>
-            New Chat
+            <Add/>
           </Button>
           <List>
             {chats.map((chat) => (
