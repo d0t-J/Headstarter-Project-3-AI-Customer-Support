@@ -46,6 +46,7 @@ export default function Home() {
   const [activeChatId, setActiveChatId] = useState(1);
   const [openChat, setOpenChat] = useState(false);
   const messagesEndRef = useRef(null);
+  const tabsRef = useRef(null)
   const activeChat = chats.find((chat) => chat.id === activeChatId);
   const messages = activeChat ? activeChat.messages : [];
 
@@ -168,10 +169,6 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const createNewChat = () => {
     const newChatId = chats.length + 1;
     setChats([
@@ -204,12 +201,32 @@ export default function Home() {
     }
   };
 
+  const deleteChat = (id) => {
+    setChats((chats) => chats.filter((chat) => chat.id !== id));
+    if (activeChatId === id && chats.length > 1) {
+      setActiveChatId(chats[chats.length - 1].id); 
+    } else if (chats.length === 1) {
+      setActiveChatId(null);  
+    }
+  };
+
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [openChat]);
+
+  useEffect(() => {
+    if (tabsRef.current) {
+      tabsRef.current.scrollTo({ left: tabsRef.current.scrollWidth, behavior: "smooth" });
+    }
+  }, [chats.length]);
 
   return (
     <Container>
@@ -252,12 +269,15 @@ export default function Home() {
             right: 16,
           }}
         >
-          <Box display="flex" flexDirection="row" alignItems="flex-end">
+          {/* Title Bar */}
+          <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="h5" gutterBottom> {`Ticket ${activeChatId}`}</Typography>
             <IconButton edge="end" onClick={handleChatToggle}>
               <Close />
             </IconButton>
           </Box>
-          <Box overflow="auto" display="flex" flexDirection="column">
+          {/* Ticket Tabs */}
+          <Box ref={tabsRef} overflow="auto" display="flex" flexDirection="column">
             <Tabs variant="scrollable" scrollButtons="auto">
               <Toolbar>
                 {chats.map((chat) => (
@@ -269,6 +289,7 @@ export default function Home() {
                         : chat.name
                     }
                     onClick={() => setActiveChatId(chat.id)}
+                    onDelete={() => deleteChat(chat.id)}
                     variant={chat.id === activeChatId ? "filled" : "outlined"}
                     sx={{ marginRight: 1 }}
                   />
@@ -280,6 +301,7 @@ export default function Home() {
             </Tabs>
           </Box>
           <Divider />
+          {/* Message Box */}
           <Box
             display="flex"
             flexDirection="column"
@@ -334,4 +356,4 @@ export default function Home() {
       )}
     </Container>
   );
-}
+};
