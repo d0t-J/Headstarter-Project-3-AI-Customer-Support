@@ -46,7 +46,8 @@ export default function Home() {
   const [activeChatId, setActiveChatId] = useState(1);
   const [openChat, setOpenChat] = useState(false);
   const messagesEndRef = useRef(null);
-  const tabsRef = useRef(null)
+  const tabsRef = useRef(null);
+
   const activeChat = chats.find((chat) => chat.id === activeChatId);
   const messages = activeChat ? activeChat.messages : [];
 
@@ -202,14 +203,20 @@ export default function Home() {
   };
 
   const deleteChat = (id) => {
-    setChats((chats) => chats.filter((chat) => chat.id !== id));
-    if (activeChatId === id && chats.length > 1) {
-      setActiveChatId(chats[chats.length - 1].id); 
-    } else if (chats.length === 1) {
-      setActiveChatId(null);  
-    }
+    setChats((chats) => {
+      const updatedChats = chats.filter((chat) => chat.id !== id);
+      if (activeChatId === id) {
+        if (updatedChats.length > 0) {
+          const newActiveChatId = updatedChats[updatedChats.length - 1].id;
+          setActiveChatId(newActiveChatId);
+        } else {
+          setActiveChatId(null);
+          setOpenChat(true);
+        }
+      }
+      return updatedChats;
+    });
   };
-
 
   useEffect(() => {
     scrollToBottom();
@@ -224,7 +231,10 @@ export default function Home() {
 
   useEffect(() => {
     if (tabsRef.current) {
-      tabsRef.current.scrollTo({ left: tabsRef.current.scrollWidth, behavior: "smooth" });
+      tabsRef.current.scrollTo({
+        left: tabsRef.current.scrollWidth,
+        behavior: "smooth",
+      });
     }
   }, [chats.length]);
 
@@ -270,14 +280,27 @@ export default function Home() {
           }}
         >
           {/* Title Bar */}
-          <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h5" gutterBottom> {`Ticket ${activeChatId}`}</Typography>
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h5" gutterBottom>
+              {" "}
+              {`Ticket ${activeChatId}`}
+            </Typography>
             <IconButton edge="end" onClick={handleChatToggle}>
               <Close />
             </IconButton>
           </Box>
           {/* Ticket Tabs */}
-          <Box ref={tabsRef} overflow="auto" display="flex" flexDirection="column">
+          <Box
+            ref={tabsRef}
+            overflow="auto"
+            display="flex"
+            flexDirection="column"
+          >
             <Tabs variant="scrollable" scrollButtons="auto">
               <Toolbar>
                 {chats.map((chat) => (
@@ -289,7 +312,10 @@ export default function Home() {
                         : chat.name
                     }
                     onClick={() => setActiveChatId(chat.id)}
-                    onDelete={() => deleteChat(chat.id)}
+                    onDelete={(event) => {
+                      event.stopPropagation();
+                      deleteChat(chat.id);
+                    }}
                     variant={chat.id === activeChatId ? "filled" : "outlined"}
                     sx={{ marginRight: 1 }}
                   />
@@ -356,4 +382,4 @@ export default function Home() {
       )}
     </Container>
   );
-};
+}
