@@ -1,17 +1,25 @@
 "use client";
 import {
+  AppBar,
   Box,
   Button,
+  Card,
+  Chip,
   Container,
-  Grid,
+  Divider,
+  Fab,
+  IconButton,
   List,
   ListItem,
   ListItemText,
   Stack,
+  Tab,
+  Tabs,
   TextField,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { Add } from '@mui/icons-material';
-import { ThemeProvider } from "@mui/material/styles";
+import { Add, ChatBubble, Close } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
@@ -36,6 +44,7 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeChatId, setActiveChatId] = useState(1);
+  const [openChat, setOpenChat] = useState(false);
   const messagesEndRef = useRef(null);
   const activeChat = chats.find((chat) => chat.id === activeChatId);
   const messages = activeChat ? activeChat.messages : [];
@@ -181,84 +190,130 @@ export default function Home() {
     setActiveChatId(newChatId);
   };
 
+  const handleChatToggle = () => {
+    setOpenChat((prev) => !prev);
+  };
+
+  const handleClickOutside = (event) => {
+    if (
+      openChat &&
+      event.target.closest(".chat-box") === null &&
+      event.target.closest(".MuiFab-root") === null
+    ) {
+      setOpenChat(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [openChat]);
+
   return (
     <Container>
-      <Box
-        width="100vw"
-        height="100vh"
-        display="flex"
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {/* Sidebar for Chat List */}
-        <Box
-          width="250px"
-          height="100%"
-          border="1px solid black"
-          borderRadius="15px"
-          p={2}
-          mr={2}
-        >
-          <Button variant="contained" fullWidth onClick={createNewChat}>
-            <Add/>
-          </Button>
-          <List>
-            {chats.map((chat) => (
-              <ListItem
-                key={chat.id}
-                button
-                selected={chat.id === activeChatId}
-                onClick={() => setActiveChatId(chat.id)}
-              >
-                <ListItemText primary={chat.name} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+      <Box width="100vw" height="100vh" display="flex" flexDirection="column">
+        <Typography variant="h2" align="center" gutterBottom>
+          Welcome
+        </Typography>
+        <Typography variant="body1" align="center" paragraph>
+          Ask Away!!
+        </Typography>
 
-        {/* Chat Box */}
+        <Fab
+          color="primary"
+          onClick={handleChatToggle}
+          sx={{
+            position: "fixed",
+            bottom: 18,
+            right: 18,
+          }}
+        >
+          <ChatBubble />
+        </Fab>
+      </Box>
+
+      {openChat && (
         <Box
-          width="750px"
-          height="800px"
+          className="chat-box"
+          width="400px"
+          height="600px"
           display="flex"
           flexDirection="column"
-          border="1px solid black"
+          position="fixed"
           borderRadius="15px"
-          p={2}
+          bgcolor="background.paper"
+          sx={{
+            boxShadow: 10,
+            p: 2,
+            zIndex: 1200,
+            bottom: 16,
+            right: 16,
+          }}
         >
-          <Stack
-            direction={"column"}
-            spacing={2}
+          <Box display="flex" flexDirection="row" alignItems="flex-end">
+            <IconButton edge="end" onClick={handleChatToggle}>
+              <Close />
+            </IconButton>
+          </Box>
+          <Box overflow="auto" display="flex" flexDirection="column">
+            <Tabs variant="scrollable" scrollButtons="auto">
+              <Toolbar>
+                {chats.map((chat) => (
+                  <Chip
+                    key={chat.id}
+                    label={
+                      chat.name.length > 10
+                        ? `${chat.name.slice(0, 10)}...`
+                        : chat.name
+                    }
+                    onClick={() => setActiveChatId(chat.id)}
+                    variant={chat.id === activeChatId ? "filled" : "outlined"}
+                    sx={{ marginRight: 1 }}
+                  />
+                ))}
+                <IconButton onClick={createNewChat}>
+                  <Add />
+                </IconButton>
+              </Toolbar>
+            </Tabs>
+          </Box>
+          <Divider />
+          <Box
+            display="flex"
+            flexDirection="column"
             flexGrow={1}
             overflow="auto"
-            maxHeight="100%"
+            p={1}
           >
-            {messages.map((message, index) => (
-              <Box
-                key={index}
-                display="flex"
-                justifyContent={
-                  message.role === "assistant" ? "flex-start" : "flex-end"
-                }
-              >
+            <Stack direction={"column"} spacing={2}>
+              {messages.map((message, index) => (
                 <Box
-                  bgcolor={
-                    message.role === "assistant"
-                      ? "primary.main"
-                      : "secondary.main"
+                  key={index}
+                  display="flex"
+                  justifyContent={
+                    message.role === "assistant" ? "flex-start" : "flex-end"
                   }
-                  color="white"
-                  borderRadius={14}
-                  p={3}
                 >
-                  {message.content}
+                  <Box
+                    bgcolor={
+                      message.role === "assistant"
+                        ? "primary.main"
+                        : "secondary.main"
+                    }
+                    color="white"
+                    borderRadius={14}
+                    p={2}
+                  >
+                    {message.content}
+                  </Box>
                 </Box>
-              </Box>
-            ))}
-            <div ref={messagesEndRef} />
-          </Stack>
-          <Stack direction={"row"} spacing={2}>
+              ))}
+              <div ref={messagesEndRef} />
+            </Stack>
+          </Box>
+          <Stack direction={"row"} spacing={2} mt={2}>
             <TextField
               label="Message"
               fullWidth
@@ -268,15 +323,15 @@ export default function Home() {
               disabled={isLoading}
             />
             <Button
-              variant="contained"
               onClick={sendMessage}
               disabled={isLoading}
+              variant="contained"
             >
-              {isLoading ? "Sending..." : "Send"}
+              {isLoading ? "Sending" : "Send"}
             </Button>
           </Stack>
         </Box>
-      </Box>
+      )}
     </Container>
   );
 }
