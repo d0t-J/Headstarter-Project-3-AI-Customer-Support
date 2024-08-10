@@ -1,34 +1,45 @@
 "use client";
+import * as React from "react";
 import {
-  AppBar,
-  Box,
+  Avatar,
   Button,
-  Card,
-  Chip,
-  Container,
-  Divider,
-  Fab,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
-  Tab,
-  Tabs,
+  CssBaseline,
   TextField,
-  Toolbar,
+  FormControlLabel,
+  Checkbox,
+  Link,
+  Paper,
+  Box,
+  Grid,
   Typography,
+  IconButton,
+  Tabs,
+  Chip,
+  Fab,
+  Stack,
+  Divider,
+  Container,
 } from "@mui/material";
-import { Add, ChatBubble, Close } from "@mui/icons-material";
+import { LockOutlined, ChatBubble, Close, Add } from "@mui/icons-material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
+import NextLink from "next/link";
 
-export default function Home() {
-  // const [messages, setMessages] = useState([
-  //   {
-  //     role: "assistant",
-  //     content: "Hi. I am support Super man. How to help you?",
-  //   },
-  // ]);
+import bgImage from "./img/bg.jpg"
+
+// Create a default theme
+const defaultTheme = createTheme();
+
+export default function SignInSide() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get("email"),
+      password: data.get("password"),
+    });
+  };
+
   const [chats, setChats] = useState([
     {
       id: 1,
@@ -36,7 +47,7 @@ export default function Home() {
       messages: [
         {
           role: "assistant",
-          content: "Hi. I am support Super man. How to help you?",
+          content: "Hi. I am support Super man. How can I help you?",
         },
       ],
     },
@@ -58,11 +69,6 @@ export default function Home() {
     setIsLoading(true);
     const newMessage = { role: "user", content: message };
     setMessage("");
-    // setMessages((messages) => [
-    //   ...messages,
-    //   { role: "user", content: message },
-    //   { role: "assistant", content: "" },
-    // ]);
 
     setChats((chats) =>
       chats.map((chat) =>
@@ -85,7 +91,6 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        // body: JSON.stringify([...messages, { role: "user", content: message }]),
         body: JSON.stringify([...messages, newMessage]),
       });
 
@@ -95,24 +100,12 @@ export default function Home() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      // let result = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const text = decoder.decode(value, { stream: true });
-        // result += text;
-        // setMessages((messages) => {
-        //   let lastMessage = messages[messages.length - 1];
-        //   let otherMessages = messages.slice(0, messages.length - 1);
-        //   return [
-        //     ...otherMessages,
-        //     {
-        //       ...lastMessage,
-        //       content: lastMessage.content + text,
-        //     },
-        //   ];
-        // });
+
         setChats((chats) =>
           chats.map((chat) =>
             chat.id === activeChatId
@@ -130,13 +123,6 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error", error);
-      // setMessage((messages) => [
-      //   ...messages,
-      //   {
-      //     role: "assistant",
-      //     content: "I'm sorry but I encountered an error.Please try again later",
-      //   },
-      // ]);
 
       setChats((chats) =>
         chats.map((chat) =>
@@ -148,7 +134,7 @@ export default function Home() {
                   {
                     role: "assistant",
                     content:
-                      "I'm sorry but I encountered an error. Please try again later",
+                      "I'm sorry but I encountered an error. Please try again later.",
                   },
                 ],
               }
@@ -180,7 +166,7 @@ export default function Home() {
         messages: [
           {
             role: "assistant",
-            content: "Hi. I am super man. How to help you?",
+            content: "Hi. I am support Super man. How can I help you?",
           },
         ],
       },
@@ -195,8 +181,9 @@ export default function Home() {
   const handleClickOutside = (event) => {
     if (
       openChat &&
-      event.target.closest(".chat-box") === null &&
-      event.target.closest(".MuiFab-root") === null
+      !event.target.closest(".chat-box") &&
+      !event.target.closest(".MuiFab-root") &&
+      !event.target.closest(".MuiIconButton-root")
     ) {
       setOpenChat(false);
     }
@@ -207,11 +194,11 @@ export default function Home() {
       const updatedChats = chats.filter((chat) => chat.id !== id);
       if (activeChatId === id) {
         if (updatedChats.length > 0) {
-          const newActiveChatId = updatedChats[updatedChats.length - 1].id;
+          const newActiveChatId = updatedChats[0].id;
           setActiveChatId(newActiveChatId);
         } else {
           setActiveChatId(null);
-          setOpenChat(true);
+          setOpenChat(false);
         }
       }
       return updatedChats;
@@ -239,147 +226,258 @@ export default function Home() {
   }, [chats.length]);
 
   return (
-    <Container>
-      <Box width="100vw" height="100vh" display="flex" flexDirection="column">
-        <Typography variant="h2" align="center" gutterBottom>
-          Welcome
-        </Typography>
-        <Typography variant="body1" align="center" paragraph>
-          Ask Away!!
-        </Typography>
+    <ThemeProvider theme={defaultTheme}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage:
+              "url('https://imgur.com/wEgBkeP')",
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "left",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            padding: 4,
+          }}
+        >
+          <Typography variant="h2" gutterBottom color="white">
+            Welcome to Ask-E
+          </Typography>
+          <Typography variant="h5" paragraph color="white">
+            Your personal Coding assistant!
+          </Typography>
+          <Typography variant="body1" paragraph color="white">
+            Ask any coding-related questions, and our support team will assist
+            you.
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlined />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <NextLink href="#" passHref>
+                    <Link variant="body2">Forgot password?</Link>
+                  </NextLink>
+                </Grid>
+                <Grid item>
+                  <NextLink href="#" passHref>
+                    <Link variant="body2">
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </NextLink>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
 
-        <Fab
-          color="primary"
-          onClick={handleChatToggle}
+      {/* Floating chat button */}
+      <Fab
+        color="primary"
+        aria-label="chat"
+        onClick={handleChatToggle}
+        sx={{
+          position: "fixed",
+          bottom: (theme) => theme.spacing(4),
+          right: (theme) => theme.spacing(4),
+        }}
+      >
+        {openChat ? <Close /> : <ChatBubble />}
+      </Fab>
+
+      {/* Chat box */}
+      {openChat && (
+        <Container
+          maxWidth="xs"
           sx={{
             position: "fixed",
-            bottom: 18,
-            right: 18,
+            bottom: (theme) => theme.spacing(12),
+            right: (theme) => theme.spacing(4),
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 4,
+            zIndex: 1000,
           }}
-        >
-          <ChatBubble />
-        </Fab>
-      </Box>
-
-      {openChat && (
-        <Box
           className="chat-box"
-          width="400px"
-          height="600px"
-          display="flex"
-          flexDirection="column"
-          position="fixed"
-          borderRadius="15px"
-          bgcolor="background.paper"
-          sx={{
-            boxShadow: 10,
-            p: 2,
-            zIndex: 1200,
-            bottom: 16,
-            right: 16,
-          }}
         >
-          {/* Title Bar */}
           <Box
             display="flex"
             flexDirection="row"
             justifyContent="space-between"
             alignItems="center"
+            p={2}
           >
             <Typography variant="h5" gutterBottom>
-              {" "}
-              {`Ticket ${activeChatId}`}
+              {activeChatId ? "Support Chat" : "No Active Chat"}
             </Typography>
             <IconButton edge="end" onClick={handleChatToggle}>
               <Close />
             </IconButton>
           </Box>
-          {/* Ticket Tabs */}
-          <Box
+
+          <Tabs
+            value={activeChatId}
+            onChange={(e, newValue) => setActiveChatId(newValue)}
+            textColor="primary"
+            indicatorColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            sx={{
+              "& .MuiTabs-flexContainer": { alignItems: "center" },
+              "& .MuiTab-root": { minHeight: "unset", py: 1, px: 2 },
+            }}
             ref={tabsRef}
-            overflow="auto"
-            display="flex"
-            flexDirection="column"
           >
-            <Tabs variant="scrollable" scrollButtons="auto">
-              <Toolbar>
-                {chats.map((chat) => (
-                  <Chip
-                    key={chat.id}
-                    label={
-                      chat.name.length > 10
-                        ? `${chat.name.slice(0, 10)}...`
-                        : chat.name
-                    }
-                    onClick={() => setActiveChatId(chat.id)}
-                    onDelete={(event) => {
-                      event.stopPropagation();
-                      deleteChat(chat.id);
-                    }}
-                    variant={chat.id === activeChatId ? "filled" : "outlined"}
-                    sx={{ marginRight: 1 }}
-                  />
-                ))}
-                <IconButton onClick={createNewChat}>
-                  <Add />
+            {chats.map((chat) => (
+              <Stack
+                direction="row"
+                alignItems="center"
+                key={chat.id}
+                sx={{ cursor: "pointer" }}
+              >
+                <Chip
+                  label={chat.name}
+                  onClick={() => setActiveChatId(chat.id)}
+                />
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => deleteChat(chat.id)}
+                  sx={{ ml: 1 }}
+                >
+                  <Close fontSize="small" />
                 </IconButton>
-              </Toolbar>
-            </Tabs>
+              </Stack>
+            ))}
+            <IconButton onClick={createNewChat}>
+              <Add />
+            </IconButton>
+          </Tabs>
+          <Divider />
+          <Box
+            sx={{
+              p: 2,
+              height: "250px",
+              overflowY: "auto",
+            }}
+          >
+            {messages.map((msg, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent:
+                    msg.role === "user" ? "flex-end" : "flex-start",
+                  mb: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: msg.role === "user" ? "grey.800" : "grey.400",
+                    color:
+                      msg.role === "user"
+                        ? "primary.contrastText"
+                        : "text.primary",
+                    maxWidth: "70%",
+                    wordWrap: "break-word",
+                  }}
+                >
+                  <Typography variant="body2">{msg.content}</Typography>
+                </Box>
+              </Box>
+            ))}
+            <div ref={messagesEndRef} />
           </Box>
           <Divider />
-          {/* Message Box */}
-          <Box
-            display="flex"
-            flexDirection="column"
-            flexGrow={1}
-            overflow="auto"
-            p={1}
-          >
-            <Stack direction={"column"} spacing={2}>
-              {messages.map((message, index) => (
-                <Box
-                  key={index}
-                  display="flex"
-                  justifyContent={
-                    message.role === "assistant" ? "flex-start" : "flex-end"
-                  }
-                >
-                  <Box
-                    bgcolor={
-                      message.role === "assistant"
-                        ? "primary.main"
-                        : "secondary.main"
-                    }
-                    color="white"
-                    borderRadius={14}
-                    p={2}
-                  >
-                    {message.content}
-                  </Box>
-                </Box>
-              ))}
-              <div ref={messagesEndRef} />
-            </Stack>
-          </Box>
-          <Stack direction={"row"} spacing={2} mt={2}>
+          <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
             <TextField
-              label="Message"
               fullWidth
+              variant="outlined"
+              placeholder="Type your message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyPress}
-              disabled={isLoading}
+              onKeyPress={handleKeyPress}
+              InputProps={{
+                sx: { borderRadius: 4 },
+              }}
             />
             <Button
               onClick={sendMessage}
               disabled={isLoading}
-              variant="contained"
+              sx={{ ml: 1, p: 2, minWidth: 0 }}
             >
-              {isLoading ? "Sending" : "Send"}
+              Send
             </Button>
-          </Stack>
-        </Box>
+          </Box>
+        </Container>
       )}
-    </Container>
+    </ThemeProvider>
   );
 }
