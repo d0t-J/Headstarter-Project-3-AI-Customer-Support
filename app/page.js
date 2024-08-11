@@ -23,7 +23,6 @@ import {
 import { LockOutlined, ChatBubble, Close, Add } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
-import NextLink from "next/link";
 
 import bgImage from "./img/bg.jpg"
 
@@ -318,16 +317,12 @@ export default function SignInSide() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <NextLink href="#" passHref>
-                    <Link variant="body2">Forgot password?</Link>
-                  </NextLink>
+                    <Link variant="body2" href="#">Forgot password?</Link>
                 </Grid>
                 <Grid item>
-                  <NextLink href="#" passHref>
-                    <Link variant="body2">
+                    <Link variant="body2" href="#">
                       {"Don't have an account? Sign Up"}
                     </Link>
-                  </NextLink>
                 </Grid>
               </Grid>
             </Box>
