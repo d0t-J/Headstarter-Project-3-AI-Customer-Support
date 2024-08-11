@@ -23,13 +23,16 @@ import {
 import { LockOutlined, ChatBubble, Close, Add, Send, AutoMode } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 import bgImage from "./img/bg.jpg"
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from "@clerk/nextjs";
 
 // Create a default theme
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
+export default function Page() {
+const { user, isLoaded, isSignedIn } = useUser();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -228,14 +231,38 @@ export default function SignInSide() {
     }
   }, [chats.length]);
 
+  useEffect(() => {
+    if(!user) return;
+    let newChats = [];
+    chats.forEach((chat) => {
+      let reChat = {...chat};
+      reChat.messages = [...chat.messages]
+      reChat.messages[0].content = `Hi ${user.fullName}, I am support Super man. How can I help you?`;
+      newChats.push(reChat);
+    })
+    console.log('newChats', newChats)
+    setChats(newChats);
+  },[user]);
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box display={'flex'} flexDirection={'column'} width={'100vw'} height={'100vh'} alignItems={'center'} className='bgGradientLight'>
         <Typography fontSize={'5rem'} fontWeight={800} className="font-raleway h1Gradient">Pantera Helpdesk</Typography>
+        <SignedOut>
         <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'50px'}}}>
-          <Typography fontWeight={900} className="h1Gradient" mr={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign In</Typography> for better experience
+          <SignInButton>
+            <Typography fontWeight={900} className="h1Gradient" mr={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign In</Typography></SignInButton> for better experience
           <Box position={'absolute'} width={'0rem'} height={'2.5px'} bgcolor={'green'} bottom={0} left={0} className="bgGradient smoothTransition animateWidth"></Box>
         </Box>
+        </SignedOut>
+        <SignedIn>
+          <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'60px'}}}>
+            Signed in with {user?.emailAddresses[0].emailAddress}. 
+            <SignOutButton>
+            <Typography fontWeight={900} className="h1Gradient" ml={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign Out</Typography></SignOutButton>
+            <Box position={'absolute'} width={'0rem'} height={'2.5px'} bgcolor={'green'} bottom={0} right={0} className="bgGradient smoothTransition animateWidth"></Box>
+          </Box>
+        </SignedIn>
         <Box width={0.75} height={1} mt={3} borderRadius={'40px 40px 0px 0px'} p={0.5} pb={0} className="bgGradient">
           <Box display={'flex'}  alignItems={'end'} width={1} height={1} borderRadius={'35px 35px 0px 0px'} overflow={'hidden'} position={'relative'} bgcolor={'rgba(255,255,255,0.75)'}>
               <Box display={'flex'} p={2} sx={{backgroundImage:'linear-gradient(to bottom, rgba(255,255,255,0.5) 60%, transparent 100%);'}} pb={'3rem'} position={'absolute'} top={0} left={0} width={1} zIndex={1} gap={1}>
