@@ -1,38 +1,23 @@
 "use client";
 import * as React from "react";
-import {
-  Avatar,
-  Button,
-  CssBaseline,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Link,
-  Paper,
-  Box,
-  Grid,
-  Typography,
-  IconButton,
-  Tabs,
-  Chip,
-  Fab,
-  Stack,
-  Divider,
-  Container,
-} from "@mui/material";
-import { LockOutlined, ChatBubble, Close, Add, Send, AutoMode } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
+import { Close, Add, Send, AutoMode } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 
-import bgImage from "./img/bg.jpg"
-import { SignedIn, SignedOut, SignInButton, SignOutButton } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+} from "@clerk/nextjs";
 
 // Create a default theme
 const defaultTheme = createTheme();
 
 export default function Page() {
-const { user, isLoaded, isSignedIn } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -49,7 +34,8 @@ const { user, isLoaded, isSignedIn } = useUser();
       messages: [
         {
           role: "assistant",
-          content: "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
+          content:
+            "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
         },
       ],
     },
@@ -171,7 +157,8 @@ const { user, isLoaded, isSignedIn } = useUser();
         messages: [
           {
             role: "assistant",
-            content: "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
+            content:
+              "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
           },
         ],
       },
@@ -232,80 +219,359 @@ const { user, isLoaded, isSignedIn } = useUser();
   }, [chats.length]);
 
   useEffect(() => {
-    if(!user) return;
+    if (!user) return;
     let newChats = [];
     chats.forEach((chat) => {
-      let reChat = {...chat};
-      reChat.messages = [...chat.messages]
+      let reChat = { ...chat };
+      reChat.messages = [...chat.messages];
       reChat.messages[0].content = `Hi ${user.fullName}, Welcome to Ask-E, your personal support assistant. How can I assist you today?`;
       newChats.push(reChat);
-    })
-    console.log('newChats', newChats)
+    });
+    console.log("newChats", newChats);
     setChats(newChats);
-  },[user]);
+  }, [user]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box display={'flex'} flexDirection={'column'} width={'100vw'} height={'100vh'} alignItems={'center'} className='bgGradientLight'>
-        <Typography fontSize={'5rem'} fontWeight={800} className="font-raleway h1Gradient">AskE Helpdesk</Typography>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        width={"100vw"}
+        height={"100vh"}
+        alignItems={"center"}
+        className="bgGradientLight"
+      >
+        <Typography
+          fontSize={"5rem"}
+          fontWeight={800}
+          className="font-raleway h1Gradient"
+        >
+          AskE Helpdesk
+        </Typography>
         <SignedOut>
-        <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'50px'}}}>
-          <SignInButton>
-            <Typography fontWeight={900} className="h1Gradient" mr={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign In</Typography></SignInButton> for better experience
-          <Box position={'absolute'} width={'0rem'} height={'2.5px'} bgcolor={'green'} bottom={0} left={0} className="bgGradient smoothTransition animateWidth"></Box>
-        </Box>
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            className="font-raleway h1Gradient animationParent"
+            fontWeight={600}
+            position={"relative"}
+            sx={{ "&:hover .animateWidth": { width: "50px" } }}
+          >
+            <SignInButton>
+              <Typography
+                fontWeight={900}
+                className="h1Gradient"
+                mr={1}
+                sx={{ textDecoration: "underline", cursor: "pointer" }}
+              >
+                Sign In
+              </Typography>
+            </SignInButton>{" "}
+            for better experience
+            <Box
+              position={"absolute"}
+              width={"0rem"}
+              height={"2.5px"}
+              bgcolor={"green"}
+              bottom={0}
+              left={0}
+              className="bgGradient smoothTransition animateWidth"
+            ></Box>
+          </Box>
         </SignedOut>
         <SignedIn>
-          <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'60px'}}}>
-            Signed in with {user?.emailAddresses[0].emailAddress}. 
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            className="font-raleway h1Gradient animationParent"
+            fontWeight={600}
+            position={"relative"}
+            sx={{ "&:hover .animateWidth": { width: "60px" } }}
+          >
+            Signed in with {user?.emailAddresses[0].emailAddress}.
             <SignOutButton>
-            <Typography fontWeight={900} className="h1Gradient" ml={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign Out</Typography></SignOutButton>
-            <Box position={'absolute'} width={'0rem'} height={'2.5px'} bgcolor={'green'} bottom={0} right={0} className="bgGradient smoothTransition animateWidth"></Box>
+              <Typography
+                fontWeight={900}
+                className="h1Gradient"
+                ml={1}
+                sx={{ textDecoration: "underline", cursor: "pointer" }}
+              >
+                Sign Out
+              </Typography>
+            </SignOutButton>
+            <Box
+              position={"absolute"}
+              width={"0rem"}
+              height={"2.5px"}
+              bgcolor={"green"}
+              bottom={0}
+              right={0}
+              className="bgGradient smoothTransition animateWidth"
+            ></Box>
           </Box>
         </SignedIn>
-        <Box width={0.75} height={1} mt={3} borderRadius={'40px 40px 0px 0px'} p={0.5} pb={0} className="bgGradient">
-          <Box display={'flex'}  alignItems={'end'} width={1} height={1} borderRadius={'35px 35px 0px 0px'} overflow={'hidden'} position={'relative'} bgcolor={'rgba(255,255,255,0.75)'}>
-              <Box display={'flex'} p={2} sx={{backgroundImage:'linear-gradient(to bottom, rgba(255,255,255,0.5) 60%, transparent 100%);'}} pb={'3rem'} position={'absolute'} top={0} left={0} width={1} zIndex={1} gap={1}>
-                {chats.map((chat, index) => (
-                  <Box className="bgGradient" p={'2px'} borderRadius={5} display={'flex'} alignItems={'center'} justifyContent={'center'} key={index}>
-                    <Box px={1} py={0.5} bgcolor={'rgba(255,255,255,0.5)'} borderRadius={8} display={'flex'} alignItems={'center'} gap={0.25} sx={{cursor:'pointer'}}>
-                    <Typography color={'rgba(0,0,0,0.6)'}>{chat.name}</Typography>
-                    {chats.length > 1?<Close fontSize="medium" sx={{padding:0.5, borderRadius:'10px', '&:hover':{bgcolor:'rgba(255,255,255,0.5)'}}} onClick={() => deleteChat(chat.id)}/>:null}</Box>
+        <Box
+          width={0.75}
+          height={1}
+          mt={3}
+          borderRadius={"40px 40px 0px 0px"}
+          p={0.5}
+          pb={0}
+          className="bgGradient"
+        >
+          <Box
+            display={"flex"}
+            alignItems={"end"}
+            width={1}
+            height={1}
+            borderRadius={"35px 35px 0px 0px"}
+            overflow={"hidden"}
+            position={"relative"}
+            bgcolor={"rgba(255,255,255,0.75)"}
+          >
+            <Box
+              display={"flex"}
+              p={2}
+              sx={{
+                backgroundImage:
+                  "linear-gradient(to bottom, rgba(255,255,255,0.5) 60%, transparent 100%);",
+              }}
+              pb={"3rem"}
+              position={"absolute"}
+              top={0}
+              left={0}
+              width={1}
+              zIndex={1}
+              gap={1}
+            >
+              {chats.map((chat, index) => (
+                <Box
+                  className="bgGradient"
+                  p={"2px"}
+                  borderRadius={5}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  key={index}
+                >
+                  <Box
+                    px={1}
+                    py={0.5}
+                    bgcolor={"rgba(255,255,255,0.5)"}
+                    borderRadius={8}
+                    display={"flex"}
+                    alignItems={"center"}
+                    gap={0.25}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <Typography color={"rgba(0,0,0,0.6)"}>
+                      {chat.name}
+                    </Typography>
+                    {chats.length > 1 ? (
+                      <Close
+                        fontSize="medium"
+                        sx={{
+                          padding: 0.5,
+                          borderRadius: "10px",
+                          "&:hover": { bgcolor: "rgba(255,255,255,0.5)" },
+                        }}
+                        onClick={() => deleteChat(chat.id)}
+                      />
+                    ) : null}
                   </Box>
-                ))}
-                <Box className="bgGradient" p={'2px'} borderRadius={5} display={'flex'} alignItems={'center'} justifyContent={'center'} onClick={createNewChat}>
-                    <Box px={1} py={0.5} bgcolor={'rgba(255,255,255,0.5)'} borderRadius={8} display={'flex'} alignItems={'center'} gap={0.25} sx={{cursor:'pointer'}} height={1}>
-                      <Add fontSize="small" color="rgba(0,0,0,0.6)"/>
+                </Box>
+              ))}
+              <Box
+                className="bgGradient"
+                p={"2px"}
+                borderRadius={5}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                onClick={createNewChat}
+              >
+                <Box
+                  px={1}
+                  py={0.5}
+                  bgcolor={"rgba(255,255,255,0.5)"}
+                  borderRadius={8}
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={0.25}
+                  sx={{ cursor: "pointer" }}
+                  height={1}
+                >
+                  <Add fontSize="small" color="rgba(0,0,0,0.6)" />
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              display={"flex"}
+              p={2}
+              width={1}
+              position={"absolute"}
+              bottom={"1rem"}
+              gap={1}
+              zIndex={2}
+            >
+              <Box
+                width={1}
+                p={"3px"}
+                className="bgGradient"
+                borderRadius={"20px"}
+                position={"relative"}
+              >
+                <input
+                  placeholder="Hi, I would like help with..."
+                  style={{
+                    zIndex: "3",
+                    border: "none",
+                    outline: "none",
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "18px",
+                    padding: "0.5rem 1rem",
+                    color: "rgba(0,0,0,0.6)",
+                    backgroundColor: "rgba(255,255,255,0.8)",
+                  }}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => (e.key === "Enter" ? sendMessage() : null)}
+                />
+              </Box>
+              <Box
+                className="bgGradient"
+                p={"3px"}
+                borderRadius={"20px"}
+                onClick={sendMessage}
+              >
+                <Box
+                  display={"flex"}
+                  p={2}
+                  bgcolor={"rgba(255,255,255,0.6)"}
+                  borderRadius={"17px"}
+                  sx={{
+                    aspectRatio: "1/1",
+                    cursor: "pointer",
+                    "&:hover": { bgcolor: "rgba(255,255,255,0.4)" },
+                  }}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Send sx={{ color: "rgba(0,0,0,0.6)" }} />
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              width={1}
+              height={"6rem"}
+              position={"absolute"}
+              bottom={0}
+              left={0}
+              zIndex={1}
+              sx={{
+                backgroundImage:
+                  "linear-gradient(to top, rgba(255,255,255,0.5) 60%, transparent 100%);",
+              }}
+            ></Box>
+
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              position={"absolute"}
+              overflow={"scroll"}
+              bottom={0}
+              left={0}
+              width={1}
+              height={1}
+              p={1}
+              py={10}
+            >
+              {chats[activeChatId - 1]?.messages.map((message, index) =>
+                message.role === "assistant" ? (
+                  <Box
+                    display={"flex"}
+                    width={1}
+                    justifyContent={"start"}
+                    p={1}
+                    key={index}
+                    ref={
+                      chats[activeChatId - 1]?.messages.length - 1 === index
+                        ? messagesEndRef
+                        : null
+                    }
+                  >
+                    <Box
+                      display={"flex"}
+                      p={"2px"}
+                      className="bgGradient"
+                      borderRadius={"15px"}
+                      maxWidth={0.4}
+                    >
+                      <Box
+                        display={"flex"}
+                        p={"2px"}
+                        bgcolor={"rgba(255,255,255,0.6)"}
+                        borderRadius={"14px"}
+                      >
+                        <Typography
+                          className="font-raleway bgGradient"
+                          sx={{
+                            p: 1,
+                            borderRadius: "13px",
+                            color: "rgba(255,255,255,1)",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {message.content || (
+                            <AutoMode
+                              fontSize="small"
+                              className="animate-spin"
+                            />
+                          )}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
-              </Box>
-              <Box display={'flex'} p={2} width={1} position={'absolute'} bottom={'1rem'} gap={1} zIndex={2}>
-                <Box width={1} p={'3px'} className='bgGradient' borderRadius={'20px'} position={'relative'}>
-                  <input placeholder="Hi, I would like help with..." style={{zIndex:'3', border:'none', outline:'none', width: '100%', height:'100%', borderRadius:'18px', padding:'0.5rem 1rem', color:'rgba(0,0,0,0.6)', backgroundColor:'rgba(255,255,255,0.8)'}} value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
-                </Box>
-                <Box className="bgGradient" p={'3px'} borderRadius={'20px'} onClick={sendMessage}><Box display={'flex'} p={2} bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'17px'} sx={{aspectRatio:'1/1', cursor:'pointer', '&:hover':{'bgcolor':'rgba(255,255,255,0.4)'}}} justifyContent={'center'} alignItems={'center'}><Send sx={{color:'rgba(0,0,0,0.6)'}}/></Box></Box>
-              </Box>
-              <Box width={1} height={'6rem'} position={'absolute'} bottom={0} left={0} zIndex={1}  sx={{backgroundImage:'linear-gradient(to top, rgba(255,255,255,0.5) 60%, transparent 100%);'}}></Box>
-              
-              <Box display={'flex'} flexDirection={'column'}  position={'absolute'} overflow={'scroll'} bottom={0} left={0} width={1} height={1} p={1} py={10}>
-                {chats[activeChatId-1]?.messages.map((message, index) => (
-                  message.role === "assistant" ?
-                  <Box display={'flex'} width={1} justifyContent={'start'} p={1} key={index} ref={chats[activeChatId-1]?.messages.length-1 === index ? messagesEndRef : null}>
-                  <Box display={'flex'} p={'2px'} className='bgGradient' borderRadius={'15px'} maxWidth={0.4}>
-                      <Box display={'flex'} p={'2px'} bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'14px'}>
-                        <Typography className="font-raleway bgGradient" sx={{p:1, borderRadius:'13px', color:'rgba(255,255,255,1)', fontWeight:'500'}}>{message.content || (<AutoMode fontSize="small" className="animate-spin"/>)}</Typography>
+                ) : (
+                  <Box
+                    display={"flex"}
+                    width={1}
+                    justifyContent={"end"}
+                    p={1}
+                    key={index}
+                    ref={
+                      chats[activeChatId - 1]?.messages.length - 1 === index
+                        ? messagesEndRef
+                        : null
+                    }
+                  >
+                    <Box
+                      display={"flex"}
+                      p={"2px"}
+                      className="bgGradient"
+                      borderRadius={"14px"}
+                    >
+                      <Box
+                        bgcolor={"rgba(255,255,255,0.6)"}
+                        borderRadius={"14px"}
+                      >
+                        <Typography
+                          className="font-raleway h1Gradient"
+                          sx={{
+                            p: 1,
+                            color: "rgba(0,0,0,0.4)",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {message.content}
+                        </Typography>
                       </Box>
+                    </Box>
                   </Box>
-                </Box>:
-                <Box display={'flex'} width={1} justifyContent={'end'} p={1} key={index} ref={chats[activeChatId-1]?.messages.length-1 === index ? messagesEndRef : null}>
-                  <Box display={'flex'} p={'2px'} className="bgGradient" borderRadius={'14px'}>
-                        <Box bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'14px'}>
-                            <Typography className="font-raleway h1Gradient" sx={{p:1, color:'rgba(0,0,0,0.4)', fontWeight:'600'}}>{message.content}</Typography>
-                        </Box>
-                  </Box>
-                  </Box>
-                ))}  
-              </Box>
+                )
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>

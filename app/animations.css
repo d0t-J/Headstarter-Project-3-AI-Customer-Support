@@ -1,50 +1,72 @@
-.h1Gradient{
-    background: linear-gradient(90deg, rgb(177, 212, 247) 0%, rgb(142, 199, 252) 9%, rgb(144, 208, 234) 31%, rgb(148, 186, 246) 57%, rgb(176, 177, 229) 80%, rgb(175, 222, 237) 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientAnimation 10s ease infinite;
-  }
-  
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-.bgGradientLight{
-    background: linear-gradient(90deg, rgb(24, 31, 39) 0%, rgb(38, 50, 61) 9%, rgb(42, 61, 68) 31%, rgb(25, 34, 48) 57%, rgb(30, 30, 39) 80%, rgb(27, 35, 37) 100%);
-    background-size: 200% 200%;
-    animation: gradientAnimation 10s ease infinite;
+.h1Gradient {
+  background: linear-gradient(
+    90deg,
+    rgb(177, 212, 247) 0%,
+    rgb(142, 199, 252) 9%,
+    rgb(144, 208, 234) 31%,
+    rgb(148, 186, 246) 57%,
+    rgb(176, 177, 229) 80%,
+    rgb(175, 222, 237) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 10s ease infinite;
 }
 
-.bgGradient{
-    background: linear-gradient(150deg, rgba(0,212,255,1) 0%, rgba(171,147,231,1) 9%, rgba(228,181,217,1) 31%, rgba(124,178,250,1) 57%, rgba(227,161,222,1) 80%, rgba(0,212,255,1) 100%);
-    background-size: 200% 200%;
-    animation: gradientAnimation 10s ease infinite;
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.animate-spin{
-    animation: spin 1s linear infinite;
+.bgGradientLight {
+  background: linear-gradient(
+    90deg,
+    rgb(24, 31, 39) 0%,
+    rgb(38, 50, 61) 9%,
+    rgb(42, 61, 68) 31%,
+    rgb(25, 34, 48) 57%,
+    rgb(30, 30, 39) 80%,
+    rgb(27, 35, 37) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientAnimation 10s ease infinite;
+}
+
+.bgGradient {
+  background: linear-gradient(
+    150deg,
+    rgba(0, 212, 255, 1) 0%,
+    rgba(171, 147, 231, 1) 9%,
+    rgba(228, 181, 217, 1) 31%,
+    rgba(124, 178, 250, 1) 57%,
+    rgba(227, 161, 222, 1) 80%,
+    rgba(0, 212, 255, 1) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientAnimation 10s ease infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.smoothTransition{
-    transition: all 0.3s ease;
+.smoothTransition {
+  transition: all 0.3s ease;
 }
-
-  

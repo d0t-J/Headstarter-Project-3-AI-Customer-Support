@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-const Groq = require('groq-sdk');
-
+const Groq = require("groq-sdk");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -44,7 +43,7 @@ export async function POST(req) {
       const encoder = new TextEncoder();
       try {
         for await (const chunk of completion) {
-          const content = chunk.choices[0]?.delta?.content || '';
+          const content = chunk.choices[0]?.delta?.content || "";
           if (content) {
             const text = encoder.encode(content);
             controller.enqueue(text);
