@@ -1,5 +1,5 @@
 .h1Gradient{
-    background: linear-gradient(90deg, rgba(0,212,255,1) 0%, rgba(171,147,231,1) 9%, rgba(228,181,217,1) 31%, rgba(124,178,250,1) 57%, rgba(227,161,222,1) 80%, rgba(0,212,255,1) 100%);
+    background: linear-gradient(90deg, rgb(177, 212, 247) 0%, rgb(142, 199, 252) 9%, rgb(144, 208, 234) 31%, rgb(148, 186, 246) 57%, rgb(176, 177, 229) 80%, rgb(175, 222, 237) 100%);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -19,7 +19,7 @@
   }
 
 .bgGradientLight{
-    background: linear-gradient(150deg, rgba(0,212,255,0.25) 0%, rgba(171,147,231,0.25) 9%, rgba(228,181,217,0.25) 31%, rgba(124,178,250,0.25) 57%, rgba(227,161,222,0.25) 80%, rgba(0,212,255,0.25) 100%);
+    background: linear-gradient(150deg, rgb(37, 32, 45) 0%, rgb(22, 21, 26) 9%, rgb(37, 32, 45) 31%, rgb(39, 35, 45) 57%, rgb(34, 30, 43) 80%, rgb(39, 35, 45) 100%);
     background-size: 200% 200%;
     animation: gradientAnimation 10s ease infinite;
 }
