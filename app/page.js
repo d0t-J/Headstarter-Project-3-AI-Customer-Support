@@ -49,7 +49,7 @@ const { user, isLoaded, isSignedIn } = useUser();
       messages: [
         {
           role: "assistant",
-          content: "Hi. I am support Super man. How can I help you?",
+          content: "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
         },
       ],
     },
@@ -171,7 +171,7 @@ const { user, isLoaded, isSignedIn } = useUser();
         messages: [
           {
             role: "assistant",
-            content: "Hi. I am support Super man. How can I help you?",
+            content: "Hi. Welcome to Ask-E, your personal support assistant. How can I assist you today?",
           },
         ],
       },
@@ -237,7 +237,7 @@ const { user, isLoaded, isSignedIn } = useUser();
     chats.forEach((chat) => {
       let reChat = {...chat};
       reChat.messages = [...chat.messages]
-      reChat.messages[0].content = `Hi ${user.fullName}, I am support Super man. How can I help you?`;
+      reChat.messages[0].content = `Hi ${user.fullName}, Welcome to Ask-E, your personal support assistant. How can I assist you today?`;
       newChats.push(reChat);
     })
     console.log('newChats', newChats)
@@ -247,7 +247,7 @@ const { user, isLoaded, isSignedIn } = useUser();
   return (
     <ThemeProvider theme={defaultTheme}>
       <Box display={'flex'} flexDirection={'column'} width={'100vw'} height={'100vh'} alignItems={'center'} className='bgGradientLight'>
-        <Typography fontSize={'5rem'} fontWeight={800} className="font-raleway h1Gradient">Pantera Helpdesk</Typography>
+        <Typography fontSize={'5rem'} fontWeight={800} className="font-raleway h1Gradient">AskE Helpdesk</Typography>
         <SignedOut>
         <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'50px'}}}>
           <SignInButton>
