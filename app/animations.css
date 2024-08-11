@@ -19,7 +19,7 @@
   }
 
 .bgGradientLight{
-    background: linear-gradient(150deg, rgb(37, 32, 45) 0%, rgb(22, 21, 26) 9%, rgb(37, 32, 45) 31%, rgb(39, 35, 45) 57%, rgb(34, 30, 43) 80%, rgb(39, 35, 45) 100%);
+    background: linear-gradient(90deg, rgb(24, 31, 39) 0%, rgb(38, 50, 61) 9%, rgb(42, 61, 68) 31%, rgb(25, 34, 48) 57%, rgb(30, 30, 39) 80%, rgb(27, 35, 37) 100%);
     background-size: 200% 200%;
     animation: gradientAnimation 10s ease infinite;
 }
