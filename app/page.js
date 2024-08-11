@@ -20,7 +20,7 @@ import {
   Divider,
   Container,
 } from "@mui/material";
-import { LockOutlined, ChatBubble, Close, Add } from "@mui/icons-material";
+import { LockOutlined, ChatBubble, Close, Add, Send, AutoMode } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
 
@@ -85,7 +85,7 @@ export default function SignInSide() {
     );
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/groq", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,6 +141,7 @@ export default function SignInSide() {
         )
       );
     }
+    scrollToBottom();
     setIsLoading(false);
   };
 
@@ -152,6 +153,8 @@ export default function SignInSide() {
   };
 
   const scrollToBottom = () => {
+    //if(!messagesEndRef.current) return;
+    //messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -204,9 +207,10 @@ export default function SignInSide() {
     });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  // useEffect(() => {
+  //   console.log('Message change')
+  //   scrollToBottom();
+  // }, [messages]);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
@@ -226,253 +230,58 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              "url('https://imgur.com/wEgBkeP')",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "left",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            padding: 4,
-          }}
-        >
-          <Typography variant="h2" gutterBottom color="white">
-            Welcome to Ask-E
-          </Typography>
-          <Typography variant="h5" paragraph color="white">
-            Your personal Coding assistant!
-          </Typography>
-          <Typography variant="body1" paragraph color="white">
-            Ask any coding-related questions, and our support team will assist
-            you.
-          </Typography>
-        </Grid>
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlined />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                    <Link variant="body2" href="#">Forgot password?</Link>
-                </Grid>
-                <Grid item>
-                    <Link variant="body2" href="#">
-                      {"Don't have an account? Sign Up"}
-                    </Link>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-
-      {/* Floating chat button */}
-      <Fab
-        color="primary"
-        aria-label="chat"
-        onClick={handleChatToggle}
-        sx={{
-          position: "fixed",
-          bottom: (theme) => theme.spacing(4),
-          right: (theme) => theme.spacing(4),
-        }}
-      >
-        {openChat ? <Close /> : <ChatBubble />}
-      </Fab>
-
-      {/* Chat box */}
-      {openChat && (
-        <Container
-          maxWidth="xs"
-          sx={{
-            position: "fixed",
-            bottom: (theme) => theme.spacing(12),
-            right: (theme) => theme.spacing(4),
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 4,
-            zIndex: 1000,
-          }}
-          className="chat-box"
-        >
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            p={2}
-          >
-            <Typography variant="h5" gutterBottom>
-              {activeChatId ? "Support Chat" : "No Active Chat"}
-            </Typography>
-            <IconButton edge="end" onClick={handleChatToggle}>
-              <Close />
-            </IconButton>
-          </Box>
-
-          <Tabs
-            value={activeChatId}
-            onChange={(e, newValue) => setActiveChatId(newValue)}
-            textColor="primary"
-            indicatorColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            allowScrollButtonsMobile
-            sx={{
-              "& .MuiTabs-flexContainer": { alignItems: "center" },
-              "& .MuiTab-root": { minHeight: "unset", py: 1, px: 2 },
-            }}
-            ref={tabsRef}
-          >
-            {chats.map((chat) => (
-              <Stack
-                direction="row"
-                alignItems="center"
-                key={chat.id}
-                sx={{ cursor: "pointer" }}
-              >
-                <Chip
-                  label={chat.name}
-                  onClick={() => setActiveChatId(chat.id)}
-                />
-                <IconButton
-                  size="small"
-                  color="error"
-                  onClick={() => deleteChat(chat.id)}
-                  sx={{ ml: 1 }}
-                >
-                  <Close fontSize="small" />
-                </IconButton>
-              </Stack>
-            ))}
-            <IconButton onClick={createNewChat}>
-              <Add />
-            </IconButton>
-          </Tabs>
-          <Divider />
-          <Box
-            sx={{
-              p: 2,
-              height: "250px",
-              overflowY: "auto",
-            }}
-          >
-            {messages.map((msg, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  justifyContent:
-                    msg.role === "user" ? "flex-end" : "flex-start",
-                  mb: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 2,
-                    bgcolor: msg.role === "user" ? "grey.800" : "grey.400",
-                    color:
-                      msg.role === "user"
-                        ? "primary.contrastText"
-                        : "text.primary",
-                    maxWidth: "70%",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  <Typography variant="body2">{msg.content}</Typography>
-                </Box>
+      <Box display={'flex'} flexDirection={'column'} width={'100vw'} height={'100vh'} alignItems={'center'} className='bgGradientLight'>
+        <Typography fontSize={'5rem'} fontWeight={800} className="font-raleway h1Gradient">Pantera Helpdesk</Typography>
+        <Box display={'flex'} alignItems={'center'} className="font-raleway h1Gradient animationParent" fontWeight={600} position={'relative'} sx={{'&:hover .animateWidth':{width:'50px'}}}>
+          <Typography fontWeight={900} className="h1Gradient" mr={1} sx={{textDecoration:'underline', cursor:'pointer'}}>Sign In</Typography> for better experience
+          <Box position={'absolute'} width={'0rem'} height={'2.5px'} bgcolor={'green'} bottom={0} left={0} className="bgGradient smoothTransition animateWidth"></Box>
+        </Box>
+        <Box width={0.75} height={1} mt={3} borderRadius={'40px 40px 0px 0px'} p={0.5} pb={0} className="bgGradient">
+          <Box display={'flex'}  alignItems={'end'} width={1} height={1} borderRadius={'35px 35px 0px 0px'} overflow={'hidden'} position={'relative'} bgcolor={'rgba(255,255,255,0.75)'}>
+              <Box display={'flex'} p={2} sx={{backgroundImage:'linear-gradient(to bottom, rgba(255,255,255,0.5) 60%, transparent 100%);'}} pb={'3rem'} position={'absolute'} top={0} left={0} width={1} zIndex={1} gap={1}>
+                {chats.map((chat, index) => (
+                  <Box className="bgGradient" p={'2px'} borderRadius={5} display={'flex'} alignItems={'center'} justifyContent={'center'} key={index}>
+                    <Box px={1} py={0.5} bgcolor={'rgba(255,255,255,0.5)'} borderRadius={8} display={'flex'} alignItems={'center'} gap={0.25} sx={{cursor:'pointer'}}>
+                    <Typography color={'rgba(0,0,0,0.6)'}>{chat.name}</Typography>
+                    {chats.length > 1?<Close fontSize="medium" sx={{padding:0.5, borderRadius:'10px', '&:hover':{bgcolor:'rgba(255,255,255,0.5)'}}} onClick={() => deleteChat(chat.id)}/>:null}</Box>
+                  </Box>
+                ))}
+                <Box className="bgGradient" p={'2px'} borderRadius={5} display={'flex'} alignItems={'center'} justifyContent={'center'} onClick={createNewChat}>
+                    <Box px={1} py={0.5} bgcolor={'rgba(255,255,255,0.5)'} borderRadius={8} display={'flex'} alignItems={'center'} gap={0.25} sx={{cursor:'pointer'}} height={1}>
+                      <Add fontSize="small" color="rgba(0,0,0,0.6)"/>
+                    </Box>
+                  </Box>
               </Box>
-            ))}
-            <div ref={messagesEndRef} />
+              <Box display={'flex'} p={2} width={1} position={'absolute'} bottom={'1rem'} gap={1} zIndex={2}>
+                <Box width={1} p={'3px'} className='bgGradient' borderRadius={'20px'} position={'relative'}>
+                  <input placeholder="Hi, I would like help with..." style={{zIndex:'3', border:'none', outline:'none', width: '100%', height:'100%', borderRadius:'18px', padding:'0.5rem 1rem', color:'rgba(0,0,0,0.6)', backgroundColor:'rgba(255,255,255,0.8)'}} value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
+                </Box>
+                <Box className="bgGradient" p={'3px'} borderRadius={'20px'} onClick={sendMessage}><Box display={'flex'} p={2} bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'17px'} sx={{aspectRatio:'1/1', cursor:'pointer', '&:hover':{'bgcolor':'rgba(255,255,255,0.4)'}}} justifyContent={'center'} alignItems={'center'}><Send sx={{color:'rgba(0,0,0,0.6)'}}/></Box></Box>
+              </Box>
+              <Box width={1} height={'6rem'} position={'absolute'} bottom={0} left={0} zIndex={1}  sx={{backgroundImage:'linear-gradient(to top, rgba(255,255,255,0.5) 60%, transparent 100%);'}}></Box>
+              
+              <Box display={'flex'} flexDirection={'column'}  position={'absolute'} overflow={'scroll'} bottom={0} left={0} width={1} height={1} p={1} py={10}>
+                {chats[activeChatId-1]?.messages.map((message, index) => (
+                  message.role === "assistant" ?
+                  <Box display={'flex'} width={1} justifyContent={'start'} p={1} key={index} ref={chats[activeChatId-1]?.messages.length-1 === index ? messagesEndRef : null}>
+                  <Box display={'flex'} p={'2px'} className='bgGradient' borderRadius={'15px'} maxWidth={0.4}>
+                      <Box display={'flex'} p={'2px'} bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'14px'}>
+                        <Typography className="font-raleway bgGradient" sx={{p:1, borderRadius:'13px', color:'rgba(255,255,255,1)', fontWeight:'500'}}>{message.content || (<AutoMode fontSize="small" className="animate-spin"/>)}</Typography>
+                      </Box>
+                  </Box>
+                </Box>:
+                <Box display={'flex'} width={1} justifyContent={'end'} p={1} key={index} ref={chats[activeChatId-1]?.messages.length-1 === index ? messagesEndRef : null}>
+                  <Box display={'flex'} p={'2px'} className="bgGradient" borderRadius={'14px'}>
+                        <Box bgcolor={'rgba(255,255,255,0.6)'} borderRadius={'14px'}>
+                            <Typography className="font-raleway h1Gradient" sx={{p:1, color:'rgba(0,0,0,0.4)', fontWeight:'600'}}>{message.content}</Typography>
+                        </Box>
+                  </Box>
+                  </Box>
+                ))}  
+              </Box>
           </Box>
-          <Divider />
-          <Box sx={{ display: "flex", alignItems: "center", p: 1 }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Type your message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              InputProps={{
-                sx: { borderRadius: 4 },
-              }}
-            />
-            <Button
-              onClick={sendMessage}
-              disabled={isLoading}
-              sx={{ ml: 1, p: 2, minWidth: 0 }}
-            >
-              Send
-            </Button>
-          </Box>
-        </Container>
-      )}
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 }

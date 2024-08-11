@@ -1,5 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Yeseva+One&display=swap');
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: 'Raleway', sans-serif;
 }
+
+div{
+  font-family: 'Raleway', sans-serif;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+div::-webkit-scrollbar{
+  display: none;
+}
+
+.font-raleway {
+  font-family: 'Raleway', sans-serif;
+}
+

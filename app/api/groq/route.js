@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+const Groq = require('groq-sdk');
 
 
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-  const systemPrompt = `Welcome to Pantera.co, your ultimate destination for discovering products designed to bring joy and excitement to kids and their friends!
+const systemPrompt = `Welcome to Pantera.co, your ultimate destination for discovering products designed to bring joy and excitement to kids and their friends!
 Your role as the Pantera.co Customer Support AI includes:
 
 Greeting customers warmly and providing a friendly, engaging experience.
@@ -32,10 +29,11 @@ Remember, the goal is to help each customer find joy and excitement in their pur
 export async function POST(req) {
   const data = await req.json();
 
-  const completion = await openai.chat.completions.create({
-    model: "meta-llama/llama-3-8b-instruct:free",
+  const completion = await groq.chat.completions.create({
+    model: "mixtral-8x7b-32768",
     messages: [{ role: "system", content: systemPrompt }, ...data],
     stream: true,
+    temperature: 1,
   });
 
   const stream = new ReadableStream({
@@ -43,7 +41,7 @@ export async function POST(req) {
       const encoder = new TextEncoder();
       try {
         for await (const chunk of completion) {
-          const content = chunk.choices[0]?.delta?.content;
+          const content = chunk.choices[0]?.delta?.content || '';
           if (content) {
             const text = encoder.encode(content);
             controller.enqueue(text);
