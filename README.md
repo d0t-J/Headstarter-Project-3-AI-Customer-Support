@@ -1,1 +1,1 @@
-Check out demo video at: https://github.com/d0t-J/Headstarter-Project-3-AI-Customer-Support
+Check out demo video at: https://www.youtube.com/watch?v=jJznAHGQgJ8
